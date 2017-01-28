@@ -1,0 +1,3 @@
+make sure your connecting your sd card shield according to its pin
+note: connections for arduino uno and mega are not same
+should change the values od cs,clk,mosi,miso for arduino mega to 53,51,52,50 
