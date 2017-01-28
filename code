@@ -1,0 +1,86 @@
+/*
+ * SD card attached to SPI bus as follows:
+ ** MOSI - pin 11
+ ** MISO - pin 12
+ ** CLK - pin 13
+ ** CS - pin 4 (for MKRZero SD: SDCARD_SS_PIN)
+ */
+#include <SPI.h>
+#include <SD.h>
+#include<dht.h>
+dht DHT;
+
+// if you require to change the pin number, Edit the pin with your arduino pin.
+
+#define DHT11_PIN 3
+int analogInput = A0;
+float vout = 0.0;
+float vin = 0.0;
+float R1 = 30002.0; //  
+float R2 = 7501.0; // 
+int value = 0;
+int x=0;
+File myFile;
+
+void setup() {
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+
+
+  Serial.print("Initializing SD card...");
+
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    return;
+    }
+  Serial.println("initialization done.");
+pinMode(analogInput, INPUT);
+   
+  if (SD.exists("example.txt")) {
+    Serial.println("example.txt exists.");
+  } else {
+    Serial.println("example.txt doesn't exist.");
+  }
+
+  // open a new file and immediately close it:
+  Serial.println("Creating example.txt...");
+  myFile = SD.open("example.txt", FILE_WRITE);
+
+
+   Serial.print(" DC VOLTMETER ");
+
+Serial.println(" Humidity and temperature Detector");
+while(x!=0){
+  int chk = DHT.read11(DHT11_PIN);
+  // read the value at analog input
+   value = analogRead(analogInput);
+   vout = (value * 5.0) / 1024.0; // see text
+   vin = vout/(R2/(R1+R2)); 
+   
+Serial.print("INPUT V= ");
+Serial.println(vin,2);
+
+Serial.println(" Humidity " );
+
+Serial.println(DHT.humidity, 1);
+
+Serial.println(" Temp ");
+
+Serial.println(DHT.temperature, 1);
+
+delay(2000);
+
+  }
+  myFile.close();
+
+  
+}
+
+void loop() {
+  // nothing happens after setup finishes.
+}
+
+
